@@ -1,0 +1,18 @@
+// Schéma Prisma — placeholder Phase 1
+// Le schéma complet (User, Run, Participation, Sponsorship, Report, Sanction,
+// Message, Route, EmergencyContact, CheckIn, SosAlert) est implémenté en Phase 2.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model HealthCheck {
+  id        String   @id @default(cuid())
+  ok        Boolean  @default(true)
+  createdAt DateTime @default(now())
+}

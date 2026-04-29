@@ -28,6 +28,14 @@ yarn-error.log*
 # local env files
 .env*.local
 
+# prisma : SQLite généré localement
+prisma/dev.db
+prisma/dev.db-journal
+
+# uploads runtime (photos CI / selfies / check-ins) — ne pas versionner
+public/uploads/*
+!public/uploads/.gitkeep
+
 # vercel
 .vercel
 

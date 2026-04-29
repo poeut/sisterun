@@ -93,7 +93,7 @@ const config: Config = {
         pulseRing: "pulseRing 1.6s ease-out infinite",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "system-ui", "sans-serif"],
+        sans: ["Inter", "system-ui", "-apple-system", "BlinkMacSystemFont", "sans-serif"],
       },
     },
   },

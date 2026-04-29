@@ -1,6 +1,6 @@
-// Schéma Prisma — placeholder Phase 1
-// Le schéma complet (User, Run, Participation, Sponsorship, Report, Sanction,
-// Message, Route, EmergencyContact, CheckIn, SosAlert) est implémenté en Phase 2.
+// SisterRun — Schéma Prisma complet
+// Stockage local : SQLite (fichier prisma/dev.db).
+// En production : remplacer le provider par "postgresql".
 
 generator client {
   provider = "prisma-client-js"
@@ -11,8 +11,238 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model HealthCheck {
+// =========================================================================
+// USERS
+// =========================================================================
+
+model User {
+  id                  String    @id @default(cuid())
+  email               String    @unique
+  passwordHash        String
+  firstName           String
+  lastName            String
+  birthDate           DateTime
+  phone               String?
+  bio                 String?
+  level               RunLevel  @default(BEGINNER)
+  photoUrl            String?
+  idCardUrl           String?
+  selfieUrl           String?
+  verified            Boolean   @default(false)
+  verifiedAt          DateTime?
+  banned              Boolean   @default(false)
+  bannedAt            DateTime?
+  banReason           String?
+  sponsorBlockedUntil DateTime?
+  role                Role      @default(USER)
+  premium             Boolean   @default(false)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+
+  organizedRuns        Run[]              @relation("RunOrganizer")
+  participations       Participation[]
+  sponsorshipsGiven    Sponsorship[]      @relation("Sponsor")
+  sponsorshipsReceived Sponsorship[]      @relation("Sponsored")
+  reportsMade          Report[]           @relation("Reporter")
+  reportsReceived      Report[]           @relation("Reported")
+  sanctions            Sanction[]
+  messages             Message[]
+  emergencyContacts    EmergencyContact[]
+  checkIns             CheckIn[]
+  sosAlerts            SosAlert[]
+}
+
+enum Role {
+  USER
+  ADMIN
+  MODERATOR
+}
+
+enum RunLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+// =========================================================================
+// RUNS
+// =========================================================================
+
+model Run {
+  id              String    @id @default(cuid())
+  organizerId     String
+  organizer       User      @relation("RunOrganizer", fields: [organizerId], references: [id])
+  title           String
+  description     String?
+  startLat        Float
+  startLng        Float
+  startAddress    String
+  scheduledAt     DateTime
+  durationMin     Int       @default(45)
+  level           RunLevel
+  maxParticipants Int       @default(8)
+  routeId         String?
+  route           Route?    @relation(fields: [routeId], references: [id])
+  status          RunStatus @default(SCHEDULED)
+  createdAt       DateTime  @default(now())
+
+  participations Participation[]
+  messages       Message[]
+  checkIns       CheckIn[]
+  sosAlerts      SosAlert[]
+}
+
+enum RunStatus {
+  SCHEDULED
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+model Participation {
+  id       String   @id @default(cuid())
+  userId   String
+  runId    String
+  user     User     @relation(fields: [userId], references: [id])
+  run      Run      @relation(fields: [runId], references: [id])
+  joinedAt DateTime @default(now())
+
+  @@unique([userId, runId])
+}
+
+// =========================================================================
+// SPONSORSHIPS (parrainage)
+// =========================================================================
+
+model Sponsorship {
+  id          String   @id @default(cuid())
+  sponsorId   String
+  sponsoredId String
+  sponsor     User     @relation("Sponsor", fields: [sponsorId], references: [id])
+  sponsored   User     @relation("Sponsored", fields: [sponsoredId], references: [id])
+  createdAt   DateTime @default(now())
+
+  @@unique([sponsorId, sponsoredId])
+}
+
+// =========================================================================
+// REPORTS / SANCTIONS
+// =========================================================================
+
+model Report {
+  id         String       @id @default(cuid())
+  reporterId String
+  reportedId String
+  reporter   User         @relation("Reporter", fields: [reporterId], references: [id])
+  reported   User         @relation("Reported", fields: [reportedId], references: [id])
+  reason     ReportReason
+  comment    String?
+  status     ReportStatus @default(PENDING)
+  resolvedAt DateTime?
+  resolution String?
+  createdAt  DateTime     @default(now())
+}
+
+enum ReportReason {
+  HARASSMENT
+  INAPPROPRIATE_BEHAVIOR
+  FAKE_PROFILE
+  SAFETY_ISSUE
+  OTHER
+}
+
+enum ReportStatus {
+  PENDING
+  UNDER_REVIEW
+  VALIDATED
+  REJECTED
+}
+
+model Sanction {
+  id       String       @id @default(cuid())
+  userId   String
+  user     User         @relation(fields: [userId], references: [id])
+  type     SanctionType
+  reason   String
+  startsAt DateTime     @default(now())
+  endsAt   DateTime?
+  active   Boolean      @default(true)
+}
+
+enum SanctionType {
+  SPONSOR_BLOCK_6M
+  PERMANENT_BAN
+  WARNING
+  TEMPORARY_BAN
+}
+
+// =========================================================================
+// CHAT
+// =========================================================================
+
+model Message {
   id        String   @id @default(cuid())
-  ok        Boolean  @default(true)
+  runId     String
+  userId    String
+  run       Run      @relation(fields: [runId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+  content   String
   createdAt DateTime @default(now())
+}
+
+// =========================================================================
+// PARCOURS PRÉ-ENREGISTRÉS
+// =========================================================================
+
+model Route {
+  id            String  @id @default(cuid())
+  name          String
+  description   String
+  distanceKm    Float
+  geoJson       String  // LineString sérialisé (SQLite n'a pas de type JSON natif)
+  safetyScore   Int
+  bestTimeOfDay String  // morning | afternoon | evening | night
+  lighting      Int     // 0-5
+  popularity    Int     // 0-5
+  runs          Run[]
+}
+
+// =========================================================================
+// SAFETY
+// =========================================================================
+
+model EmergencyContact {
+  id       String  @id @default(cuid())
+  userId   String
+  user     User    @relation(fields: [userId], references: [id])
+  name     String
+  phone    String
+  email    String?
+  relation String?
+}
+
+model CheckIn {
+  id        String   @id @default(cuid())
+  userId    String
+  runId     String
+  user      User     @relation(fields: [userId], references: [id])
+  run       Run      @relation(fields: [runId], references: [id])
+  photoUrl  String
+  verified  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, runId])
+}
+
+model SosAlert {
+  id         String    @id @default(cuid())
+  userId     String
+  runId      String?
+  user       User      @relation(fields: [userId], references: [id])
+  run        Run?      @relation(fields: [runId], references: [id])
+  lat        Float
+  lng        Float
+  resolved   Boolean   @default(false)
+  resolvedAt DateTime?
+  createdAt  DateTime  @default(now())
 }

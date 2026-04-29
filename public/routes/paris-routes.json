@@ -1,0 +1,110 @@
+[
+  {
+    "name": "Boucle Buttes-Chaumont",
+    "description": "Boucle vallonnée autour du parc, ombragée et fréquentée le matin.",
+    "distanceKm": 4.2,
+    "safetyScore": 82,
+    "bestTimeOfDay": "morning",
+    "lighting": 4,
+    "popularity": 5,
+    "geoJson": {
+      "type": "LineString",
+      "coordinates": [
+        [2.3811, 48.8809],
+        [2.3833, 48.8821],
+        [2.3856, 48.8810],
+        [2.3854, 48.8788],
+        [2.3825, 48.8783],
+        [2.3805, 48.8795],
+        [2.3811, 48.8809]
+      ]
+    }
+  },
+  {
+    "name": "Bois de Vincennes — Lac Daumesnil",
+    "description": "Boucle plate autour du lac Daumesnil, idéale en après-midi.",
+    "distanceKm": 5.8,
+    "safetyScore": 78,
+    "bestTimeOfDay": "afternoon",
+    "lighting": 3,
+    "popularity": 4,
+    "geoJson": {
+      "type": "LineString",
+      "coordinates": [
+        [2.4226, 48.8329],
+        [2.4286, 48.8341],
+        [2.4338, 48.8324],
+        [2.4359, 48.8296],
+        [2.4317, 48.8273],
+        [2.4258, 48.8275],
+        [2.4221, 48.8298],
+        [2.4226, 48.8329]
+      ]
+    }
+  },
+  {
+    "name": "Canal Saint-Martin — République",
+    "description": "Quais éclairés, très fréquentés en début de soirée.",
+    "distanceKm": 3.9,
+    "safetyScore": 86,
+    "bestTimeOfDay": "evening",
+    "lighting": 5,
+    "popularity": 5,
+    "geoJson": {
+      "type": "LineString",
+      "coordinates": [
+        [2.3656, 48.8717],
+        [2.3669, 48.8746],
+        [2.3692, 48.8779],
+        [2.3711, 48.8810],
+        [2.3702, 48.8831],
+        [2.3678, 48.8819],
+        [2.3661, 48.8784],
+        [2.3656, 48.8717]
+      ]
+    }
+  },
+  {
+    "name": "Champ de Mars — Tour Eiffel",
+    "description": "Plein cœur touristique, très éclairé même tard.",
+    "distanceKm": 3.1,
+    "safetyScore": 90,
+    "bestTimeOfDay": "night",
+    "lighting": 5,
+    "popularity": 5,
+    "geoJson": {
+      "type": "LineString",
+      "coordinates": [
+        [2.2986, 48.8556],
+        [2.2954, 48.8569],
+        [2.2941, 48.8590],
+        [2.2980, 48.8612],
+        [2.3018, 48.8595],
+        [2.3025, 48.8567],
+        [2.3001, 48.8553],
+        [2.2986, 48.8556]
+      ]
+    }
+  },
+  {
+    "name": "Boucle Parc Monceau",
+    "description": "Petite boucle élégante, parfaite pour les débutantes en matinée.",
+    "distanceKm": 2.4,
+    "safetyScore": 80,
+    "bestTimeOfDay": "morning",
+    "lighting": 4,
+    "popularity": 4,
+    "geoJson": {
+      "type": "LineString",
+      "coordinates": [
+        [2.3094, 48.8799],
+        [2.3110, 48.8807],
+        [2.3120, 48.8795],
+        [2.3115, 48.8782],
+        [2.3097, 48.8780],
+        [2.3081, 48.8788],
+        [2.3094, 48.8799]
+      ]
+    }
+  }
+]

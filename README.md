@@ -133,16 +133,37 @@ Voir [`DEMO.md`](./DEMO.md) — script chronométré de 5 minutes
 
 ## Statut du projet
 
-Implémentation par phases :
-
 - [x] **Phase 1** — Init Next.js, Tailwind, shadcn/ui, Prisma, structure dossiers
-- [ ] **Phase 2** — Schéma Prisma complet, migrations, seed, tests métier
-- [ ] **Phase 3** — Auth NextAuth + flow KYC
-- [ ] **Phase 4** — Layout protégé, profil, contacts urgence
-- [ ] **Phase 5** — Carte + courses
-- [ ] **Phase 6** — Détail course + chat + check-in
-- [ ] **Phase 7** — SOS + signalements + sanctions + admin
-- [ ] **Phase 8** — Parcours, RGPD, polish, DEMO.md
+- [x] **Phase 2** — Schéma Prisma complet (11 modèles), seed (20 users / 10 runs / 5 parcours), tests métier (22/22)
+- [x] **Phase 3** — NextAuth v5 (credentials + JWT), middleware Edge-safe, flow KYC complet
+- [x] **Phase 4** — Layout protégé, BottomNav, profil riche, édition, contacts urgence, parrainages
+- [x] **Phase 5** — Carte Leaflet + markers + popup + courses CRUD + page liste filtrable + création
+- [x] **Phase 6** — Détail course + jointure/désinscription + check-in photo (caméra) + chat realtime (Pusher + fallback polling)
+- [x] **Phase 7** — Course en cours + bouton SOS + signalements + sanctions auto (`decideSanctions`) + admin modération
+- [x] **Phase 8** — Parcours scorés (éclairage/popularité/horaire) + RGPD (export & suppression) + DEMO.md
+
+---
+
+## Parcours de démo (cheat-sheet)
+
+1. `/` → **Créer mon compte** → KYC (3 s analyse) → `/map`
+2. `/map` → marker rose pulsant = en cours → popup → **Voir la course**
+3. Détail course → **Rejoindre la course** → **Vue course en cours**
+4. Vue active → **Check-in photo** (caméra) → **Chat** → **Bouton SOS** (rouge sticky)
+5. Profil → **Mes signalements** + **Modération** (admin) → résolution → sanctions auto
+
+Voir [DEMO.md](./DEMO.md) pour le script complet (5 min chrono).
+
+---
+
+## Architecture — décisions notables
+
+- **Prisma 6.18** précisément (6.19+ casse `url = env(...)` ; 5.x a un bug ABI sur Node 25)
+- **Auth.js v5** en split config : `auth.config.ts` Edge-safe pour middleware, `auth.ts` Node pour Prisma+bcrypt
+- **`.env`** (Prisma) + **`.env.local`** (Next.js) — Prisma ne lit pas `.env.local`
+- **Inter** chargé via `<link>` Google Fonts (au lieu de `next/font/google`) pour des builds plus rapides offline
+- **Leaflet** par défaut (gratuit, OSM) — Mapbox optionnel via `NEXT_PUBLIC_MAPBOX_TOKEN`
+- **Pusher** optionnel — fallback automatique en polling 3 s
 
 ---
 
